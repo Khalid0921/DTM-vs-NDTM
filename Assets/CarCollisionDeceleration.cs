@@ -12,25 +12,29 @@ public class CarCollisionDeceleration : MonoBehaviour
     [Tooltip("Time (in seconds) over which the car accelerates back to full speed.")]
     public float accelerationDuration = 2f;
 
-    private bool isDecelerating = false;
+    [Tooltip("Reference to the UI Manager that will display the Continue button.")]
+    public CarStopUIManager uiManager;
 
-    // This method is called when another collider enters a trigger attached to this GameObject.
+    private bool isDecelerating = false;
+    private bool resumeRequested = false;
+
     private void OnTriggerEnter(Collider other)
     {
-        // Check that the collider is the cube (or whichever tag you assign)
+        Debug.Log("OnTriggerEnter called with tag: " + other.tag);
         if (other.CompareTag("Obstacle") && !isDecelerating)
         {
-            StartCoroutine(DecelerateAndResume());
+            Debug.Log("Obstacle detected, starting deceleration.");
+            StartCoroutine(DecelerateAndSignalUI());
         }
     }
 
-    private IEnumerator DecelerateAndResume()
+    private IEnumerator DecelerateAndSignalUI()
     {
         isDecelerating = true;
         float elapsed = 0f;
         float startMultiplier = splineCarController.MovementMultiplier;
 
-        // Deceleration phase: gradually reduce the multiplier from its current value to 0.
+        // Deceleration phase: gradually reduce the multiplier to 0.
         while (elapsed < decelerationDuration)
         {
             elapsed += Time.deltaTime;
@@ -38,14 +42,20 @@ public class CarCollisionDeceleration : MonoBehaviour
             splineCarController.SetMovementMultiplier(newMultiplier);
             yield return null;
         }
-        // Ensure the multiplier is exactly 0.
         splineCarController.SetMovementMultiplier(0f);
+        Debug.Log("Car decelerated to 0.");
 
-        // Wait until the player presses Space.
-        while (!Input.GetKeyDown(KeyCode.Space))
+        // Signal the UI manager to show the Continue button.
+        if (uiManager != null)
+            uiManager.OnCarStopped();
+
+        // Wait until the UI signals that the user clicked the Continue button.
+        resumeRequested = false;
+        while (!resumeRequested)
         {
             yield return null;
         }
+        Debug.Log("Resume requested from UI, accelerating...");
 
         // Acceleration phase: gradually restore the multiplier from 0 to 1.
         elapsed = 0f;
@@ -56,9 +66,15 @@ public class CarCollisionDeceleration : MonoBehaviour
             splineCarController.SetMovementMultiplier(newMultiplier);
             yield return null;
         }
-        // Ensure the multiplier is fully restored.
         splineCarController.SetMovementMultiplier(1f);
-
         isDecelerating = false;
+    }
+
+    /// <summary>
+    /// Called by the UI manager when the Continue button is clicked.
+    /// </summary>
+    public void ResumeCar() 
+    {
+        resumeRequested = true;
     }
 }
