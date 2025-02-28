@@ -5,7 +5,7 @@ public class SplineCarController : MonoBehaviour
 {
     [Header("Spline Settings")]
     [Tooltip("Reference to the SplineContainer that holds the spline.")]
-    public SplineContainer splineContainer; // Use SplineContainer instead of Spline
+    public SplineContainer splineContainer;
 
     [Tooltip("Speed at which the car moves along the spline (in spline parameter units per second).")]
     public float speed = 0.2f;
@@ -30,6 +30,55 @@ public class SplineCarController : MonoBehaviour
         movementMultiplier = Mathf.Clamp01(newMultiplier);
     }
 
+    /// <summary>
+    /// Switches the car to a new spline, finding the nearest t value based on the current position.
+    /// </summary>
+    /// <param name="newSpline">The new spline to follow.</param>
+    public void SwitchSpline(SplineContainer newSpline)
+    {
+        Debug.Log($"Switching to new spline: {newSpline.name}, Previous Spline: {splineContainer?.name}");
+        if (newSpline != null)
+        {
+            splineContainer = newSpline;
+            // Find the nearest t value on the new spline based on the car's current position
+            t = FindNearestTOnSpline(newSpline, transform.position);
+            UpdateCarPosition(); // Force update to ensure the car moves to the correct position on the new spline
+        }
+        else
+        {
+            Debug.LogError("New spline is null!");
+        }
+    }
+
+    /// <summary>
+    /// Finds the t value on a spline closest to a given world position.
+    /// </summary>
+    private float FindNearestTOnSpline(SplineContainer spline, Vector3 position)
+    {
+        if (spline == null || spline.Spline == null) return 0f;
+
+        float closestT = 0f;
+        float minDistance = float.MaxValue;
+
+        // Sample the spline at regular intervals to find the closest point
+        int samples = 100; // Number of points to sample (adjust for precision)
+        for (int i = 0; i <= samples; i++)
+        {
+            float sampleT = i / (float)samples;
+            Vector3 samplePosition = spline.EvaluatePosition(sampleT);
+            float distance = Vector3.Distance(position, samplePosition);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestT = sampleT;
+            }
+        }
+
+        Debug.Log($"Nearest t on new spline: {closestT}, Distance: {minDistance}");
+        return Mathf.Clamp01(closestT);
+    }
+
     void Update()
     {
         // Get input for forward (W) and backward (S).
@@ -48,19 +97,36 @@ public class SplineCarController : MonoBehaviour
 
         // Update the spline parameter based on effective input and speed.
         t += input * speed * Time.deltaTime;
-        t = Mathf.Clamp01(t);
+
+        // Wrap the spline parameter to allow multiple laps.
+        if (t > 1f)
+        {
+            t -= 1f;
+        }
+        else if (t < 0f)
+        {
+            t += 1f;
+        }
 
         // Evaluate position and tangent along the spline.
-        Vector3 newPosition = splineContainer.EvaluatePosition(t);
-        Vector3 newTangent = splineContainer.EvaluateTangent(t);
+        UpdateCarPosition();
+    }
 
-        // Update the car's position.
-        transform.position = newPosition;
-
-        // Rotate the car to face the direction of the tangent.
-        if (newTangent != Vector3.zero)
+    private void UpdateCarPosition()
+    {
+        if (splineContainer != null)
         {
-            transform.rotation = Quaternion.LookRotation(newTangent);
+            Vector3 newPosition = splineContainer.EvaluatePosition(t);
+            Vector3 newTangent = splineContainer.EvaluateTangent(t);
+
+            // Update the car's position.
+            transform.position = newPosition;
+
+            // Rotate the car to face the direction of the tangent.
+            if (newTangent != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(newTangent);
+            }
         }
     }
 }

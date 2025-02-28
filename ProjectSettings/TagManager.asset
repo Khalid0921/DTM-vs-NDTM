@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Car
   - Obstacle
+  - Junction
   layers:
   - Default
   - TransparentFX
