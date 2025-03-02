@@ -31,17 +31,19 @@ public class SplineCarController : MonoBehaviour
     }
 
     /// <summary>
-    /// Switches the car to a new spline, finding the nearest t value based on the current position.
+    /// Switches the car to a new spline, finding the nearest t value based on the junction position or current position.
     /// </summary>
     /// <param name="newSpline">The new spline to follow.</param>
-    public void SwitchSpline(SplineContainer newSpline)
+    /// <param name="junctionPosition">Optional junction position to prioritize for alignment (world space).</param>
+    public void SwitchSpline(SplineContainer newSpline, Vector3? junctionPosition = null)
     {
         Debug.Log($"Switching to new spline: {newSpline.name}, Previous Spline: {splineContainer?.name}");
         if (newSpline != null)
         {
             splineContainer = newSpline;
-            // Find the nearest t value on the new spline based on the car's current position
-            t = FindNearestTOnSpline(newSpline, transform.position);
+            // Use junction position if provided, otherwise use current position
+            Vector3 positionToMatch = junctionPosition ?? transform.position;
+            t = FindNearestTOnSpline(newSpline, positionToMatch);
             UpdateCarPosition(); // Force update to ensure the car moves to the correct position on the new spline
         }
         else
@@ -61,7 +63,7 @@ public class SplineCarController : MonoBehaviour
         float minDistance = float.MaxValue;
 
         // Sample the spline at regular intervals to find the closest point
-        int samples = 100; // Number of points to sample (adjust for precision)
+        int samples = 200; // Increase for higher precision
         for (int i = 0; i <= samples; i++)
         {
             float sampleT = i / (float)samples;
@@ -75,7 +77,7 @@ public class SplineCarController : MonoBehaviour
             }
         }
 
-        Debug.Log($"Nearest t on new spline: {closestT}, Distance: {minDistance}");
+        Debug.Log($"Nearest t on new spline: {closestT}, Distance: {minDistance}, Position: {position}");
         return Mathf.Clamp01(closestT);
     }
 

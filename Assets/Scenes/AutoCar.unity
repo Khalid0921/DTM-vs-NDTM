@@ -1380,7 +1380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e78fec68c0af6e448aec5e8ff30535d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextTrackA: {fileID: 1763599109}
+  nextTrackA: {fileID: 1035884798}
   nextTrackB: {fileID: 1763599109}
 --- !u!65 &898567451
 BoxCollider:
@@ -2690,6 +2690,74 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1394044849}
   m_SourcePrefab: {fileID: 100100000, guid: fbf8503cc60e3f1418215d6a2dc87c99, type: 3}
+--- !u!1 &1466693485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1466693486}
+  - component: {fileID: 1466693488}
+  - component: {fileID: 1466693487}
+  m_Layer: 0
+  m_Name: Junction (1)
+  m_TagString: Junction
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1466693486
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466693485}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.76, y: 0.66, z: 12.37}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1763599111}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1466693487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466693485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e78fec68c0af6e448aec5e8ff30535d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextTrackA: {fileID: 1035884798}
+  nextTrackB: {fileID: 1763599109}
+--- !u!65 &1466693488
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466693485}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1484292727 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8571278345612939153, guid: 45ee083fba8d83840b21e01af34dca9f,
@@ -3341,8 +3409,6 @@ MonoBehaviour:
   continueButton: {fileID: 1484292727}
   track1Button: {fileID: 0}
   track2Button: {fileID: 0}
-  carTransform: {fileID: 1706982152}
-  buttonOffset: {x: 2, y: 2, z: 3}
   carCollisionDeceleration: {fileID: 1706982151}
 --- !u!1 &1763599105
 GameObject:
@@ -3832,6 +3898,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 898567449}
+  - {fileID: 1466693486}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1849368149
@@ -3934,12 +4001,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1849368149}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1849368151 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6948587442945639655, guid: e9be6b9d71ce20345b55b654f6eca5d9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1849368149}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1849368156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3969,8 +4030,6 @@ MonoBehaviour:
   continueButton: {fileID: 1484292727}
   track1Button: {fileID: 132687125}
   track2Button: {fileID: 1420088207}
-  carTransform: {fileID: 1849368151}
-  buttonOffset: {x: 2, y: 1, z: 0}
   carCollisionDeceleration: {fileID: 1849368158}
 --- !u!114 &1849368158
 MonoBehaviour:

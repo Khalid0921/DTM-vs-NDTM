@@ -103,12 +103,22 @@ public class CarCollisionDeceleration : MonoBehaviour
     }
 
     /// <summary>
-    /// Called by the UI manager when Track 1 is chosen (to continue on current track, Track 1).
+    /// Called by the UI manager when Track 1 is chosen (to continue on or switch back to Track 1).
     /// </summary>
     public void ChooseTrack1()
     {
-        Debug.Log("Choosing to continue on Track 1.");
-        resumeRequested = true; // Simply resume on the current track (Track 1)
+        Debug.Log("Choosing to continue on or switch to Track 1.");
+        if (currentJunction != null && currentJunction.nextTrackA != null)
+        {
+            Vector3 junctionPos = currentJunction.transform.position; // Use junction position for Track 1
+            splineCarController.SwitchSpline(currentJunction.nextTrackA, junctionPos);
+            resumeRequested = true;
+        }
+        else
+        {
+            Debug.LogWarning("Junction or nextTrackA is null for Track 1!");
+            resumeRequested = true; // Fallback to resume on current track if null
+        }
     }
 
     /// <summary>
@@ -120,12 +130,14 @@ public class CarCollisionDeceleration : MonoBehaviour
         Debug.Log($"Choosing track: {chosenTrack.name}");
         if (chosenTrack != null)
         {
-            splineCarController.SwitchSpline(chosenTrack); // Use updated method to find nearest t
+            Vector3 junctionPos = (currentJunction != null) ? currentJunction.transform.position : transform.position;
+            splineCarController.SwitchSpline(chosenTrack, junctionPos); // Use junction position for Track 2
             resumeRequested = true;
         }
         else
         {
             Debug.LogError("Chosen track (Track 2) is null!");
+            resumeRequested = true; // Fallback to resume if null
         }
     }
 }
